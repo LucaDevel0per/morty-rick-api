@@ -39,7 +39,7 @@ O **Portal Rick & Morty** é uma aplicação web interativa que permite buscar i
 
 1. **Clone o repositório**
    ```bash
-   git clone https://github.com/seu-usuario/portal-rick-morty.git
+   git clone https://github.com/LucaDevel0per/morty-rick-api.git
    cd portal-rick-morty
    ```
 
@@ -110,12 +110,6 @@ Contribuições são sempre bem-vindas! Se você tem ideias para melhorar o proj
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-## 🙏 Agradecimentos
-
-- [Rick and Morty API](https://rickandmortyapi.com/) - Pelos dados dos personagens
-- [Google Fonts](https://fonts.google.com/) - Pelas fontes Orbitron e Inter
-- Criadores de Rick and Morty - Pela inspiração visual e temática
 
 ---
 
