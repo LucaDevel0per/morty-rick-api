@@ -3,8 +3,6 @@ async function buscarPersonagem(nome) {
     let encontrado = false;
     let personagem = null
 
-    
-
     while (!encontrado && url) {
         try {
             const res = await fetch(url);
@@ -42,54 +40,112 @@ async function buscarPersonagem2() {
 
     if (!nome) {
         const resultado = document.getElementById('resultado');
-        resultado.innerHTML = '<p style="color: #e74c3c;">⚠️ Por favor, digite o nome de um personagem!</p>';
+        resultado.innerHTML = `
+            <div class="error">
+                ⚠️ Por favor, digite o nome de um personagem para viajar pelo multiverso!
+            </div>
+        `;
         return;
     }
+    
     const resultado = document.getElementById('resultado');
     resultado.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-            <div style="width: 20px; height: 20px; border: 2px solid #667eea; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <p>Buscando personagem...</p>
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>🌀 Viajando pelas dimensões em busca de ${nome}...</p>
         </div>
-        <style>
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style>
     `;
 
     try {
         const personagem = await buscarPersonagem(nome)
         if (personagem) {
             const imageUrl = personagem.image;
-            console.log("", imageUrl)
+            console.log("URL da imagem:", imageUrl)
 
             let imagemHtml = '';
-
             if (imageUrl) {
                 imagemHtml = `
-                <img id="img-${personagem.id} || 'default'}"
-                    src="${imageUrl}"
-                    alt="personagem"
-                    width="200"
-                    style="border-radius: 8px; display: block;" 
-                        onload="document.getElementById('placeholder-${personagem.id || 'default'}').style.display='none';"
-                        onerror="this.style.display='none'; document.getElementById('placeholder-${personagem.id || 'default'}').style.display='flex';"
-                `
+                    <img src="${imageUrl}"
+                         alt="${personagem.name}"
+                         width="250"
+                         style="border-radius: 15px; margin: 20px 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(65, 255, 0, 0.3); transition: transform 0.3s ease;"
+                         onload="this.style.animation='fadeInUp 0.6s ease'"
+                         onerror="this.style.display='none';"
+                    />
+                `;
             }
+
+            // Função para obter emoji baseado no status
+            function getStatusEmoji(status) {
+                switch(status?.toLowerCase()) {
+                    case 'alive': return '💚';
+                    case 'dead': return '💀';
+                    case 'unknown': return '❓';
+                    default: return '🔍';
+                }
+            }
+
+            // Função para obter emoji baseado no gênero  
+            function getGenderEmoji(gender) {
+                switch(gender?.toLowerCase()) {
+                    case 'male': return '👨';
+                    case 'female': return '👩';
+                    case 'genderless': return '🤖';
+                    case 'unknown': return '❓';
+                    default: return '👽';
+                }
+            }
+
+            // Função para obter emoji baseado na espécie
+            function getSpeciesEmoji(species) {
+                switch(species?.toLowerCase()) {
+                    case 'human': return '👤';
+                    case 'alien': return '👽';
+                    case 'humanoid': return '🧬';
+                    case 'robot': return '🤖';
+                    case 'cronenberg': return '🧟';
+                    case 'animal': return '🐾';
+                    case 'disease': return '🦠';
+                    case 'mythological creature': return '🐉';
+                    default: return '🔬';
+                }
+            }
+
             resultado.innerHTML = `
-            <h2>${personagem.name}</h2> 
-            ${imagemHtml}
-            <p><strong>Status:</strong> ${personagem.status || 'Desconhecida'}</p>
-            <p><strong>Gênero:</strong> ${personagem.gender || 'Desconhecido'}</p>
-        `;
+                <div class="character-card">
+                    <h2>🎯 ${personagem.name}</h2> 
+                    ${imagemHtml}
+                    <div style="display: grid; gap: 15px; margin-top: 25px;">
+                        <p><strong>Status:</strong> ${getStatusEmoji(personagem.status)} ${personagem.status || 'Desconhecido'}</p>
+                        <p><strong>Gênero:</strong> ${getGenderEmoji(personagem.gender)} ${personagem.gender || 'Desconhecido'}</p>
+                        <p><strong>Espécie:</strong> ${getSpeciesEmoji(personagem.species)} ${personagem.species || 'Desconhecida'}</p>
+                        <p><strong>Origem:</strong> 🌍 ${personagem.origin?.name || 'Desconhecida'}</p>
+                        <p><strong>Localização:</strong> 📍 ${personagem.location?.name || 'Desconhecida'}</p>
+                        <p><strong>Episódios:</strong> 📺 ${personagem.episode?.length || 0} episódio(s)</p>
+                    </div>
+                </div>
+            `;
+
         } else {
-            resultado.innerHTML = '<p style="color: #e74c3c;">❌ Personagem não encontrado! Tente outro nome.</p>';
+            resultado.innerHTML = `
+                <div class="not-found">
+                    <h3>🛸 Personagem Não Encontrado!</h3>
+                    <p>❌ Não conseguimos localizar "${nome}" em nenhuma dimensão conhecida.</p>
+                    <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">
+                        💡 Dica: Tente nomes como "Rick Sanchez", "Morty Smith", "Summer Smith", "Jerry Smith", "Beth Smith"...
+                    </p>
+                </div>
+            `;
         }
     } catch(e) {
-        resultado.innerHTML = `<p style="color: #e74c3c;">💥 Erro na busca: ${e.message}</p>`;
+        resultado.innerHTML = `
+            <div class="error">
+                <h3>💥 Erro na Viagem Interdimensional!</h3>
+                <p>🚨 ${e.message}</p>
+                <p style="margin-top: 15px; font-size: 0.9rem;">
+                    Parece que algo deu errado no portal... Tente novamente!
+                </p>
+            </div>
+        `;
     }
 }
-buscarPersonagem('Rick Sanchez')
-buscarPersonagem('Morty Smith')

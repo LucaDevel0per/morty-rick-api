@@ -2,18 +2,385 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Busca de Personagem - Rick e Morty</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal de Busca - Rick e Morty</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      color: #ffffff;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Efeito de estrelas no fundo */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #41ff00, transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 90px 40px, #41ff00, transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(2px 2px at 160px 30px, #41ff00, transparent);
+      background-repeat: repeat;
+      background-size: 200px 100px;
+      animation: twinkle 3s infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 0.3; }
+    }
+    
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .header {
+      text-align: center;
+      margin: 40px 0;
+      position: relative;
+    }
+    
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, #41ff00, #00d4ff, #41ff00);
+      border-radius: 2px;
+      box-shadow: 0 0 10px #41ff00;
+    }
+    
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: 3rem;
+      font-weight: 900;
+      background: linear-gradient(45deg, #41ff00, #00d4ff, #41ff00);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s ease-in-out infinite;
+      text-shadow: 0 0 30px rgba(65, 255, 0, 0.5);
+      margin-bottom: 10px;
+    }
+    
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      color: #00d4ff;
+      font-weight: 300;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+    
+    .portal-effect {
+      font-size: 4rem;
+      margin: 20px 0;
+      animation: rotate 4s linear infinite;
+      filter: drop-shadow(0 0 20px #41ff00);
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .search-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(65, 255, 0, 0.3);
+      border-radius: 20px;
+      padding: 30px;
+      margin: 30px 0;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      width: 100%;
+      max-width: 500px;
+      position: relative;
+    }
+    
+    .search-container::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #41ff00, #00d4ff, #41ff00, #00d4ff);
+      background-size: 300% 300%;
+      border-radius: 20px;
+      z-index: -1;
+      animation: gradient-border 3s ease infinite;
+    }
+    
+    @keyframes gradient-border {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    
+    #nome {
+      width: 100%;
+      padding: 15px 20px;
+      font-size: 1.1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(65, 255, 0, 0.3);
+      border-radius: 15px;
+      color: #ffffff;
+      backdrop-filter: blur(5px);
+      transition: all 0.3s ease;
+    }
+    
+    #nome:focus {
+      outline: none;
+      border-color: #41ff00;
+      box-shadow: 0 0 20px rgba(65, 255, 0, 0.5);
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    #nome::placeholder {
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 400;
+    }
+    
+    #buscarBtn {
+      width: 100%;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: linear-gradient(45deg, #41ff00, #00d4ff);
+      border: none;
+      border-radius: 15px;
+      color: #0f3460;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    #buscarBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(65, 255, 0, 0.4);
+    }
+    
+    #buscarBtn:active {
+      transform: translateY(0);
+    }
+    
+    #buscarBtn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+    
+    #buscarBtn:hover::before {
+      left: 100%;
+    }
+    
+    #resultado {
+      width: 100%;
+      max-width: 600px;
+      margin: 30px 0;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(65, 255, 0, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .character-card {
+      text-align: center;
+      animation: fadeInUp 0.6s ease;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .character-card h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #41ff00, #00d4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 20px rgba(65, 255, 0, 0.3);
+    }
+    
+    .character-card img {
+      border-radius: 15px;
+      margin: 20px 0;
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 0 3px rgba(65, 255, 0, 0.3);
+      transition: transform 0.3s ease;
+    }
+    
+    .character-card img:hover {
+      transform: scale(1.05);
+    }
+    
+    .character-card p {
+      font-size: 1.1rem;
+      margin: 10px 0;
+      padding: 8px 15px;
+      background: rgba(65, 255, 0, 0.1);
+      border-left: 3px solid #41ff00;
+      border-radius: 8px;
+      text-align: left;
+    }
+    
+    .character-card strong {
+      color: #00d4ff;
+    }
+    
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      font-size: 1.2rem;
+    }
+    
+    .spinner {
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(65, 255, 0, 0.3);
+      border-top: 3px solid #41ff00;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      box-shadow: 0 0 15px rgba(65, 255, 0, 0.5);
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .error {
+      color: #ff4757;
+      background: rgba(255, 71, 87, 0.1);
+      border: 1px solid rgba(255, 71, 87, 0.3);
+      padding: 20px;
+      border-radius: 15px;
+      font-size: 1.1rem;
+    }
+    
+    .not-found {
+      color: #ffa502;
+      background: rgba(255, 165, 2, 0.1);
+      border: 1px solid rgba(255, 165, 2, 0.3);
+      padding: 20px;
+      border-radius: 15px;
+      font-size: 1.1rem;
+    }
+    
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      .search-container {
+        padding: 20px;
+      }
+      
+      .character-card h2 {
+        font-size: 2rem;
+      }
+      
+      #nome, #buscarBtn {
+        font-size: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>🗡️ Buscar Personagem - Rick e Morty</h1>
-  
-  <div class="search-container">
-    <input type="text" id="nome" placeholder="Digite o nome do personagem (ex: Rick Sanchez, Harold, etc)" />
-    <button id="buscarBtn">🔍 Buscar</button>
-  </div>
+  <div class="container">
+    <div class="header">
+      <h1>🌀 PORTAL RICK & MORTY</h1>
+      <p class="subtitle">Explorador Interdimensional de Personagens</p>
+      <div class="portal-effect">🌀</div>
+    </div>
+    
+    <div class="search-container">
+      <div class="input-wrapper">
+        <input type="text" id="nome" placeholder="🔍 Nome do personagem (ex: Rick Sanchez)" />
+      </div>
+      <button id="buscarBtn">
+        🚀 Viajar pelo Multiverso
+      </button>
+    </div>
 
-  <div id="resultado">
-    <p>Digite o nome de um personagem para começar a busca!</p>
+    <div id="resultado">
+      <p style="font-size: 1.2rem; opacity: 0.8;">
+        🛸 Digite o nome de um personagem para começar sua jornada interdimensional!
+      </p>
+    </div>
   </div>
 
   <script src="script.js"></script>
